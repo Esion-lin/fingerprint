@@ -11,7 +11,7 @@ def mapping_dis(distance):
 def get_parser():
 	parser = argparse.ArgumentParser(description='parameters of datasets')
 	parser.add_argument('--file_dir', default='~', help='dir of all fp files')
-	parser.add_argument('--points_num', default=5, help='how many points a path contain')
+	parser.add_argument('--points_num', default=4, help='how many points a path contain')
 	args = parser.parse_args()
 	return args
 
@@ -36,6 +36,23 @@ def insight_angle(tuple1, tuple2, tuple3):
 def cop_sort(tuple,tuple_ele):
 	new_list = sorted(tuple,key=lambda x:distance(x,tuple_ele))
 	return new_list
+
+def find_all(source, num_points, org_list):
+	ans = []
+	check = set()
+	ans.append(source)
+	min_dis = 10000
+	target = []
+	for i in range(num_points):
+		min_dis = 10000
+		target = []
+		itr = 0
+		for ele in org_list:
+			if distance(ele, ans[len(ans) - 1]) < min_dis and distance(ele, ans[len(ans) - 1])>0.001:
+				target = ele
+				min_dis = distance(ele, ans[len(ans)-1])
+		ans.append(target)
+	return ans
 
 
 def make_path(minutiaes):
@@ -77,7 +94,14 @@ def finger2path(file,points_num):
 			line = reader.readline()
 			minutiaes.append([int(x) for x in line.split()[:3]])
 	for ele in minutiaes:
+		#sort ascend take minutiaes
 		minutiaes_copy = cop_sort(minutiaes,ele)
+
+		#iterate ascend
+
+		#minutiaes_copy = find_all(ele, points_num, minutiaes)
+		if test:
+			print("list of path points is:",minutiaes_copy)
 		path.add(make_path_str(minutiaes_copy[:points_num]))
 	''' for test break'''
 	if test:
